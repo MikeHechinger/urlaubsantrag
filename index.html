@@ -445,7 +445,7 @@
           <label for="totalDays">Anzahl Arbeitstage</label>
           <div class="days-row">
             <input type="number" id="totalDays" min="0" value="0" readonly>
-            <span>Tage (abzgl. Wochenenden & Feiertage BW)</span>
+            <span>Tage (abzgl. Wochenenden, Feiertage BW, halbe Tage 24./31.12.)</span>
           </div>
         </div>
       </div>
@@ -572,6 +572,7 @@
     return holidays;
   }
 
+  // Prüft ob ein Datum ein ganzer Feiertag ist
   function isHoliday(date) {
     var year = date.getFullYear();
     var holidays = getHolidays(year);
@@ -585,7 +586,14 @@
     return false;
   }
 
-  // Auto-calculate business days (ohne Wochenenden und Feiertage BW)
+  // Prüft ob ein Datum ein halber Feiertag ist (24.12. / 31.12.)
+  function isHalfDay(date) {
+    var m = date.getMonth();
+    var d = date.getDate();
+    return (m === 11 && (d === 24 || d === 31));
+  }
+
+  // Auto-calculate business days (ohne Wochenenden, Feiertage BW, halbe Tage 24.12./31.12.)
   function calcBusinessDays() {
     if (!startDate.value || !endDate.value) return;
     const s = new Date(startDate.value);
@@ -595,7 +603,13 @@
     const cur = new Date(s);
     while (cur <= e) {
       const d = cur.getDay();
-      if (d !== 0 && d !== 6 && !isHoliday(cur)) count++;
+      if (d !== 0 && d !== 6 && !isHoliday(cur)) {
+        if (isHalfDay(cur)) {
+          count += 0.5;
+        } else {
+          count += 1;
+        }
+      }
       cur.setDate(cur.getDate() + 1);
     }
     totalDays.value = count;
