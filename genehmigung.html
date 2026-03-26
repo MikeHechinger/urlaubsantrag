@@ -538,13 +538,12 @@
       'Garantiert Lebensqualität'
     ].filter(Boolean).join('\n');
 
-    var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
-      + '&to=' + encodeURIComponent(email)
-      + '&cc=' + encodeURIComponent('mkrasselt@scheible-badundheizung.de')
-      + '&su=' + encodeURIComponent(subject)
+    var mailto = 'mailto:' + encodeURIComponent(email)
+      + '?cc=' + encodeURIComponent('mkrasselt@scheible-badundheizung.de')
+      + '&subject=' + encodeURIComponent(subject)
       + '&body=' + encodeURIComponent(body);
 
-    window.open(gmailUrl, '_blank');
+    window.location.href = mailto;
   });
 
   // Reject flow
@@ -597,13 +596,12 @@
       'Garantiert Lebensqualität'
     ].filter(Boolean).join('\n');
 
-    var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
-      + '&to=' + encodeURIComponent(email)
-      + '&cc=' + encodeURIComponent('mkrasselt@scheible-badundheizung.de')
-      + '&su=' + encodeURIComponent(subject)
+    var mailto = 'mailto:' + encodeURIComponent(email)
+      + '?cc=' + encodeURIComponent('mkrasselt@scheible-badundheizung.de')
+      + '&subject=' + encodeURIComponent(subject)
       + '&body=' + encodeURIComponent(body);
 
-    window.open(gmailUrl, '_blank');
+    window.location.href = mailto;
   });
 })();
 </script>

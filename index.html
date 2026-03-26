@@ -664,13 +664,12 @@
       'eingereicht.'
     ].filter(Boolean).join('\n');
 
-    const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
-      + '&to=' + encodeURIComponent('mkrasselt@scheible-badundheizung.de')
-      + '&cc=' + encodeURIComponent(email)
-      + '&su=' + encodeURIComponent(subject)
+    const mailto = 'mailto:mkrasselt@scheible-badundheizung.de'
+      + '?cc=' + encodeURIComponent(email)
+      + '&subject=' + encodeURIComponent(subject)
       + '&body=' + encodeURIComponent(body);
 
-    window.open(gmailUrl, '_blank');
+    window.location.href = mailto;
 
     // Show success
     formWrapper.classList.add('hidden');
