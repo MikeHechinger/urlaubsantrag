@@ -700,7 +700,7 @@
     if (reason) approvalParams.set('remark', reason);
     const approvalLink = baseUrl + '?' + approvalParams.toString();
 
-    // Build email
+    // E-Mail an Vorgesetzten (mit Genehmigungs-Link, OHNE CC an Antragsteller)
     const subject = 'Urlaubsantrag - ' + name + ' (' + formatDate(sDate) + ' - ' + formatDate(eDate) + ')';
     const body = [
       'URLAUBSANTRAG',
@@ -737,8 +737,7 @@
     ].filter(Boolean).join('\n');
 
     const mailto = 'mailto:mkrasselt@scheible-badundheizung.de'
-      + '?cc=' + encodeURIComponent(email)
-      + '&subject=' + encodeURIComponent(subject)
+      + '?subject=' + encodeURIComponent(subject)
       + '&body=' + encodeURIComponent(body);
 
     window.location.href = mailto;
