@@ -445,7 +445,7 @@
           <label for="totalDays">Anzahl Arbeitstage</label>
           <div class="days-row">
             <input type="number" id="totalDays" min="0" value="0" readonly>
-            <span>Tage (automatisch berechnet)</span>
+            <span>Tage (abzgl. Wochenenden & Feiertage BW)</span>
           </div>
         </div>
       </div>
@@ -527,7 +527,65 @@
   const endDate = document.getElementById('endDate');
   const totalDays = document.getElementById('totalDays');
 
-  // Auto-calculate business days
+  // Feiertage Baden-Württemberg berechnen
+  function getHolidays(year) {
+    var holidays = [];
+
+    // Feste Feiertage
+    holidays.push(new Date(year, 0, 1));   // Neujahr
+    holidays.push(new Date(year, 0, 6));   // Heilige Drei Könige (BW)
+    holidays.push(new Date(year, 4, 1));   // Tag der Arbeit
+    holidays.push(new Date(year, 9, 3));   // Tag der Deutschen Einheit
+    holidays.push(new Date(year, 10, 1));  // Allerheiligen (BW)
+    holidays.push(new Date(year, 11, 25)); // 1. Weihnachtstag
+    holidays.push(new Date(year, 11, 26)); // 2. Weihnachtstag
+
+    // Ostersonntag nach Gaußscher Osterformel
+    var a = year % 19;
+    var b = Math.floor(year / 100);
+    var c = year % 100;
+    var d = Math.floor(b / 4);
+    var e = b % 4;
+    var f = Math.floor((b + 8) / 25);
+    var g = Math.floor((b - f + 1) / 3);
+    var h = (19 * a + b - d - g + 15) % 30;
+    var i = Math.floor(c / 4);
+    var k = c % 4;
+    var l = (32 + 2 * e + 2 * i - h - k) % 7;
+    var m = Math.floor((a + 11 * h + 22 * l) / 451);
+    var month = Math.floor((h + l - 7 * m + 114) / 31) - 1;
+    var day = ((h + l - 7 * m + 114) % 31) + 1;
+    var easter = new Date(year, month, day);
+
+    // Bewegliche Feiertage (relativ zu Ostern)
+    function addDays(date, n) {
+      var d = new Date(date);
+      d.setDate(d.getDate() + n);
+      return d;
+    }
+    holidays.push(addDays(easter, -2));  // Karfreitag
+    holidays.push(addDays(easter, 1));   // Ostermontag
+    holidays.push(addDays(easter, 39));  // Christi Himmelfahrt
+    holidays.push(addDays(easter, 50));  // Pfingstmontag
+    holidays.push(addDays(easter, 60));  // Fronleichnam (BW)
+
+    return holidays;
+  }
+
+  function isHoliday(date) {
+    var year = date.getFullYear();
+    var holidays = getHolidays(year);
+    for (var i = 0; i < holidays.length; i++) {
+      if (holidays[i].getFullYear() === date.getFullYear() &&
+          holidays[i].getMonth() === date.getMonth() &&
+          holidays[i].getDate() === date.getDate()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Auto-calculate business days (ohne Wochenenden und Feiertage BW)
   function calcBusinessDays() {
     if (!startDate.value || !endDate.value) return;
     const s = new Date(startDate.value);
@@ -537,7 +595,7 @@
     const cur = new Date(s);
     while (cur <= e) {
       const d = cur.getDay();
-      if (d !== 0 && d !== 6) count++;
+      if (d !== 0 && d !== 6 && !isHoliday(cur)) count++;
       cur.setDate(cur.getDate() + 1);
     }
     totalDays.value = count;
