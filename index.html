@@ -695,7 +695,8 @@
       to: formatDate(eDate),
       days: days,
       supervisor: supervisor,
-      date: today
+      date: today,
+      exp: Date.now() + 7 * 24 * 60 * 60 * 1000  // 7 Tage gültig
     });
     if (reason) approvalParams.set('remark', reason);
     const approvalLink = baseUrl + '?' + approvalParams.toString();

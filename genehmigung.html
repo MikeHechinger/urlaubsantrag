@@ -343,6 +343,17 @@
   </div>
 </div>
 
+<!-- Expired State -->
+<div class="error-state" id="expiredState">
+  <div class="error-card">
+    <div class="error-icon" style="background:#fef3c7">
+      <svg viewBox="0 0 24 24" style="stroke:#92400e"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    </div>
+    <h2>Link abgelaufen</h2>
+    <p>Dieser Genehmigungs-Link ist nicht mehr gültig. Genehmigungs-Links sind aus Sicherheitsgründen nur 7 Tage gültig. Bitte kontaktieren Sie den Antragsteller, damit ein neuer Antrag eingereicht wird.</p>
+  </div>
+</div>
+
 <!-- Main Content -->
 <div id="mainContent" style="display:none">
 <main class="main">
@@ -482,6 +493,13 @@
   // Validate required fields
   if (!name || !email || !from || !to) {
     document.getElementById('errorState').classList.add('visible');
+    return;
+  }
+
+  // Prüfe ob Link abgelaufen ist (7 Tage gültig)
+  var exp = params.get('exp');
+  if (exp && Date.now() > parseInt(exp)) {
+    document.getElementById('expiredState').classList.add('visible');
     return;
   }
 
